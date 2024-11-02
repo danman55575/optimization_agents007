@@ -58,6 +58,7 @@ def find_initial_solution(old_n, n, m, A, b):
     return initial_x
 
 '''
+The interior-point algorithm solve maximazation problem!
 For given objective function and constraints. The constraints must be represented as follows:
 1) a * x + ... + b * z <= k
 ...
