@@ -9,6 +9,8 @@
 
 using namespace std;
 
+// Table represents the matrix for transportation problem. It contains
+// information about costs, supply and demand units, valid and invalid rows and columns, etc.
 class Table {
 private:
     int n, m;
@@ -21,7 +23,7 @@ public:
         n = supply.size();
         m = demand.size();
 
-        table = vector<vector<int>>(n+1, vector<int>(m+1));
+        table = vector<vector<int>>(n+1, vector<int>(m+1, 0));
         valid_rows.assign(n, 1);
         valid_columns.assign(m, 1);
 
@@ -187,6 +189,8 @@ public:
     }
 };
 
+// tp_solution represents a solution of the transportation problem,
+// it contains information about decision vector in matrix form
 struct tp_solution {
 private:
     int n, m;
@@ -211,6 +215,7 @@ public:
     }
 };
 
+// position represents coordinate of the point in the table
 struct position {
     int row;
     int col;
@@ -334,6 +339,23 @@ tp_solution russel_algorithm(Table init_table) {
 
 }
 
+bool check_for_applicability(const Table& init_table) {
+    for (int row = 0; row < init_table.get_row_number()+1; row++) {
+        for (int col = 0; col < init_table.get_column_number()+1; col++) {
+            if (init_table.get_cost(row, col) < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+bool check_for_balance(const vector<int>& supply, const vector<int>& demand) {
+    long long sum1 = 0, sum2 = 0;
+    for (int elem : supply) sum1 += elem;
+    for (int elem : demand) sum2 += elem;
+    return (sum1 == sum2);
+}
+
 int main() {
     int n, m;
 
@@ -364,6 +386,17 @@ int main() {
     }
 
     Table init_table(costs, supply, demand);
+
+    if (!check_for_applicability(init_table)) {
+        cout << "The method is not applicable!\n";
+        return 0;
+    }
+
+    if (!check_for_balance(supply, demand)) {
+        cout << "The problem is not balanced!\n";
+        return 0;
+    }
+
     init_table.show();
 
     tp_solution north_west_sol = north_west_algorithm(init_table);
